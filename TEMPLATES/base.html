@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>myapp</title>
+
+    </head>
+    <body>
+        <center>
+            <h3>portfolio.co......</h3>
+            <hr>
+            <fieldset>
+                <form method="post">
+                    <h6>enter data</h6>
+                    <span>upload your profile pic:</span> 
+                    <input type="text" name="pic" id="">
+                    <br></br>
+                    <input type="text" name="uname" id=""placeholder="Enter username">
+                    <br></br>
+                    <input type="email" name="email" id=""placeholder="Enter email">
+                    <br></br>
+                    <button type="submit">submit</button>
+                </form>
+            </fieldset>
+
+            
+            <h3>myProfile</h3>
+            {# retriving profile data #}
+            {% if data %}
+            <hr>
+            <img src="{{ data['pic'] }}" alt="dp" width="220">
+            <p><b>Username:</b> {{ data['uname'] }}</p>
+            <p><b>Email: </b> {{ data['email'] }}  </p>
+            {% endif %}
+
+        </center>
+    </body>
+</html>
