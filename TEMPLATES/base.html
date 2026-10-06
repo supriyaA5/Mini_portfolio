@@ -1,37 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>myapp</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile App</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
 
-    </head>
-    <body>
-        <center>
-            <h3>portfolio.co......</h3>
-            <hr>
-            <fieldset>
-                <form method="post">
-                    <h6>enter data</h6>
-                    <span>upload your profile pic:</span> 
-                    <input type="text" name="pic" id="">
-                    <br></br>
-                    <input type="text" name="uname" id=""placeholder="Enter username">
-                    <br></br>
-                    <input type="email" name="email" id=""placeholder="Enter email">
-                    <br></br>
-                    <button type="submit">submit</button>
-                </form>
-            </fieldset>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-            
-            <h3>myProfile</h3>
-            {# retriving profile data #}
-            {% if data %}
-            <hr>
-            <img src="{{ data['pic'] }}" alt="dp" width="220">
-            <p><b>Username:</b> {{ data['uname'] }}</p>
-            <p><b>Email: </b> {{ data['email'] }}  </p>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            padding: 30px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: var(--text-main);
+            text-align: center;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Profile Card Preview Styling */
+        .profile-card {
+            padding: 0;
+            position: relative;
+        }
+
+        .banner-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background-color: #cbd5e1;
+        }
+
+        .profile-header {
+            padding: 0 30px 20px 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid var(--card-bg);
+            object-fit: cover;
+            margin-top: -55px;
+            background-color: #e2e8f0;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .headline {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .bio {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .skill-badge {
+            background-color: #e0e7ff;
+            color: var(--primary-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Form Section -->
+    <div class="container">
+        <h2>Enter Profile Details</h2>
+        <form method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pic">Profile Picture URL</label>
+                    <input type="url" name="pic" id="pic" placeholder="https://example.com/photo.jpg" required>
+                </div>
+                <div class="form-group">
+                    <label for="banner">Banner Image URL</label>
+                    <input type="url" name="banner" id="banner" placeholder="https://example.com/banner.jpg" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" name="name" id="name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="headline">Professional Headline</label>
+                    <input type="text" name="headline" id="headline" placeholder="Senior Software Engineer">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" placeholder="john@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" name="location" id="location" placeholder="New York, USA">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="experience">Experience Level</label>
+                    <select name="experience" id="experience">
+                        <option value="Entry Level">Entry Level</option>
+                        <option value="Mid Level">Mid Level</option>
+                        <option value="Senior Level">Senior Level</option>
+                        <option value="Lead / Executive">Lead / Executive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="join_date">Join Date</label>
+                    <input type="date" name="join_date" id="join_date">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="skills">Skills (comma-separated)</label>
+                <input type="text" name="skills" id="skills" placeholder="Python, Flask, JavaScript, SQL">
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Short Bio</label>
+                <textarea name="bio" id="bio" placeholder="Tell us a little bit about yourself..."></textarea>
+            </div>
+
+            <button type="submit">Save Profile</button>
+        </form>
+    </div>
+
+    <!-- Profile Display Section -->
+    {% if data %}
+    <div class="container profile-card">
+        <!-- Banner Image -->
+        <img src="{{ data['banner'] }}" alt="Profile Banner" class="banner-img">
+
+        <div class="profile-header">
+            <!-- Profile Picture -->
+            <img src="{{ data['pic'] }}" alt="Profile Picture" class="avatar">
+
+            <!-- Name and Headline -->
+            <div class="profile-name">{{ data['name'] }}</div>
+            <div class="headline">{{ data['headline'] }}</div>
+
+            <!-- Metadata (Location, Email, Experience, Join Date) -->
+            <div class="meta-info">
+                <span>📍 {{ data['location'] }}</span>
+                <span>📧 {{ data['email'] }}</span>
+                <span>💼 {{ data['experience'] }}</span>
+                <span>📅 Joined {{ data['join_date'] }}</span>
+            </div>
+
+            <!-- Short Bio -->
+            <p class="bio">{{ data['bio'] }}</p>
+
+            <!-- Skills -->
+            {% if data['skills'] %}
+            <div class="skills-container">
+                {% for skill in data['skills'].split(',') %}
+                    <span class="skill-badge">{{ skill.strip() }}</span>
+                {% endfor %}
+            </div>
             {% endif %}
+        </div>
+    </div>
+    {% endif %}
 
-        </center>
-    </body>
+</body>
 </html>
